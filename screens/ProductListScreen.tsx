@@ -18,18 +18,19 @@ const ProductsScreen: React.FC = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      axios.get('https://fakestoreapi.com/products')
-        .then(response => {
-          setProducts(response.data);
-          console.log("--------------------------------------------------------------------response.data",response.data);
-          
-          setLoading(false);
-        })
-        .catch(error => {
-          console.error('Error fetching products:', error);
-          setError(true);
-          setLoading(false);
-        });
+      try {
+        const response = await fetch('https://fakestoreapi.com/products');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setProducts(data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        setError(true);
+        setLoading(false);
+      }
     };
 
     fetchProducts();
