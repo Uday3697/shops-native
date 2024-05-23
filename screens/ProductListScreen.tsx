@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 
@@ -16,19 +16,20 @@ const ProductsScreen: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const fetchProducts = async () => {
-      try {
-        const response = await axios.get('https://fakestoreapi.com/products');
-        console.log("------------------------------------response.data",response.data);
-        
-        setProducts(response.data);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
+      axios.get('https://fakestoreapi.com/products')
+        .then(response => {
+          setProducts(response.data);
+          console.log("--------------------------------------------------------------------response.data",response.data);
+          
+          setLoading(false);
+        })
+        .catch(error => {
+          console.error('Error fetching products:', error);
+          setError(true);
+          setLoading(false);
+        });
     };
 
     fetchProducts();
@@ -59,12 +60,14 @@ const ProductsScreen: React.FC = () => {
   }
 
   return (
-    <FlatList
-      data={products}
-      renderItem={renderItem}
-      keyExtractor={(item) => item.id.toString()}
-      contentContainerStyle={styles.container}
-    />
+    <View style={{ flex: 1 }}>
+      <FlatList
+        data={products}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id.toString()}
+        contentContainerStyle={styles.container}
+      />
+    </View>
   );
 };
 
